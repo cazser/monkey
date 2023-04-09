@@ -13,6 +13,13 @@ const (
 	INT = "INT"
 	ASSIGN = "="
 	PLUS = "+"
+	MINUS = "-"
+	BANG = "!"
+	ASTERISK = "*"
+	SLASH= "/"
+
+	LT = "<"
+	GT = ">"
 	COMMA = ","
 	SEMICOLON = ";"
 	LPAREN ="("
