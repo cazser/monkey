@@ -6,7 +6,7 @@ type Node interface{
 }
 
 
-type Statment interface{
+type Statement interface{
 	Node
 	statementNode()
 }
@@ -17,7 +17,7 @@ type Expression interface{
 }
 
 type Program struct{
-	Statements []Statment
+	Statements []Statement
 }
 
 
