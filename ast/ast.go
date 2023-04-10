@@ -301,7 +301,7 @@ func (fl *FunctionLiteral) String() string{
 
 type CallExpression struct{
 	Token token.Token
-	FUNCTION Expression
+	Function Expression
 	Arguments []Expression
 };
 
@@ -318,7 +318,7 @@ func (ce *CallExpression) String() string{
 		args = append(args, a.String())
 	}
 
-	out.WriteString(ce.FUNCTION.String());
+	out.WriteString(ce.Function.String());
 	out.WriteString("(");
   out.WriteString(strings.Join( args, ", "));
 	out.WriteString(")");
