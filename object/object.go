@@ -20,7 +20,7 @@ func (i *Integer) Inspect() string {
 	return fmt.Sprintf("%d", i.Value);
 }
 
-func (i *Integer) Type() string{
+func (i *Integer) Type() ObjectType{
 	return INTEGER_OBJ;
 }
 
