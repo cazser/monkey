@@ -209,10 +209,12 @@ func TestParsingPrefixExpressions(t *testing.T){
    prefixTests:=[]struct{
 		input string
 		operator string 
-		integerValue int64
+		value interface{}
 	 }{
 		{"!5", "!", 5},
 		{"-15", "-", 15},
+		{"!true", "!", true},
+		{"!false", "!", false},
 	 }
 
 	 for _, tt := range prefixTests{
@@ -225,23 +227,22 @@ func TestParsingPrefixExpressions(t *testing.T){
 			t.Fatalf("program.Statements does not contain %d statements. got=%d\n",
 	    1, len(program.Statements));
 		}
-		stmt, ok:= program.Statements[0].(*ast.ExpressionStatement);
-		if !ok{
+		stmt, ok := program.Statements[0].(*ast.ExpressionStatement)
+		if !ok {
 			t.Fatalf("program.Statements[0] is not ast.ExpressionStatement. got=%T",
-		program.Statements[0]);
+				program.Statements[0])
 		}
 
-		exp, ok := stmt.Expression.(*ast.PrefixExpression);
-		if !ok{
-			t.Fatalf("stmt is not ast.PrefixExpression. got=%T", stmt.Expression);
+			exp, ok := stmt.Expression.(*ast.PrefixExpression)
+		if !ok {
+			t.Fatalf("stmt is not ast.PrefixExpression. got=%T", stmt.Expression)
 		}
-		if exp.Operator != tt.operator{
+		if exp.Operator != tt.operator {
 			t.Fatalf("exp.Operator is not '%s'. got=%s",
-		tt.operator, exp.Operator)
+				tt.operator, exp.Operator)
 		}
-
-		if !testIntegerLiteral( t, exp.Right, tt.integerValue){
-			return;
+		if !testLiteralExpression(t, exp.Right, tt.value) {
+			return
 		}
 	}
 
