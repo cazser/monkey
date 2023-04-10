@@ -41,7 +41,7 @@ func (p *Parser) peekPrecedence() int{
 
 
 func (p *Parser) curPrecedence() int{
-	if p, ok:= precedences[p.peekToken.Type]; ok{
+	if p, ok:= precedences[p.curToken.Type]; ok{
 			return p;
 		}
 
@@ -74,12 +74,37 @@ func New(l *lexer.Lexer) *Parser{
 	p.regiterPrefix(token.INT, p.parseInteger);
 	p.regiterPrefix(token.BANG, p.parsePrefixExpression);
 	p.regiterPrefix(token.MINUS, p.parsePrefixExpression);
+
+	p.infixParseFns = make(map[token.TokenType]infixParseFn);
+	p.regiterInfix(token.PLUS, p.parseInfixExpression);
+	p.regiterInfix(token.MINUS, p.parseInfixExpression);
+	p.regiterInfix(token.SLASH, p.parseInfixExpression);
+	p.regiterInfix(token.ASTERISK, p.parseInfixExpression);
+	p.regiterInfix(token.EQ, p.parseInfixExpression);
+	p.regiterInfix(token.NOT_EQ, p.parseInfixExpression);
+	p.regiterInfix(token.LT, p.parseInfixExpression);
+	p.regiterInfix(token.GT, p.parseInfixExpression);
+
+
 	p.nextToken();
 	p.nextToken();
 
 	return p;
 }
 
+func (p *Parser) parseInfixExpression(left ast.Expression) ast.Expression{
+	expression := &ast.InfixExpression{
+		Token: p.curToken,
+		Operator: p.curToken.Literal,
+		Left: left,
+	}
+
+	precedence:= p.curPrecedence();
+	p.nextToken();
+	expression.Right = p.parseExpression(precedence);
+
+	return expression;
+}
 
 func (p *Parser) Errors() []string{
 	return p.errors;
@@ -209,7 +234,15 @@ func (p *Parser) parseExpression(precedence int) ast.Expression{
 		return nil;
 	}
 	leftExp := prefix();
+  for !p.peekTokenIs(token.SEMICOLON) && precedence < p.peekPrecedence(){
+     infix:= p.infixParseFns[p.peekToken.Type];
+		 if infix== nil{
+			return leftExp;
+		 }
+		 p.nextToken();
 
+		 leftExp = infix(leftExp);
+	}
 	return leftExp;
 }
 
