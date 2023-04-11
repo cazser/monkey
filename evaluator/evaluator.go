@@ -3,6 +3,7 @@ package evaluator
 import (
 	"monkey/ast"
 	"monkey/object"
+	"fmt"
 )
 
 var (
@@ -41,6 +42,11 @@ func Eval(node ast.Node) object.Object{
 	return nil;
 }
 
+
+func newError(format string, a ...interface{}) *object.Error{
+	return &object.Error{Message: fmt.Sprintf(format, a...)};
+}
+
 func evalProgram(program *ast.Program) object.Object{
 	var result object.Object;
 	for _, statement := range program.Statements{
@@ -68,7 +74,7 @@ func evalPrefixExpression(operator string, right object.Object) object.Object{
 	case "-":
 		return evalMinusPrefixOperatorExpression(right);
 	default:
-		return NULL;
+		return newError("unknown operator: %s %s", operator, right.Type());
 	}
 }
 
@@ -87,7 +93,7 @@ func evalBangOperatorExpression(right object.Object) object.Object{
 
 func evalMinusPrefixOperatorExpression(right object.Object) object.Object{
 	if right.Type() != object.INTEGER_OBJ{
-		return NULL;
+		return newError("unknown operator: -%s", right.Type());
 	}
 
 	value:= right.(*object.Integer).Value;
@@ -107,8 +113,12 @@ func evalInfixExpression(
 		return nativeBoolToBooleanObject(left == right);
 	case operator == "!=":
 		return nativeBoolToBooleanObject(left != right);
+	case left.Type() != right.Type():
+		return newError("type mismatch: %s %s %s",
+	          left.Type(), operator, right.Type())
 	default:
-		return NULL;
+		 return newError("unknown operator: %s %s %s", 
+		left.Type(), operator, right.Type());
 	}
 }
 
@@ -136,7 +146,8 @@ func evalIntegerInfixExpression(operator string, left object.Object, right objec
 	
 
 	default:
-		return NULL;
+		return newError("unknown operator: %s %s %s",
+		left.Type(), operator, right.Type());
 	
 	}
 }

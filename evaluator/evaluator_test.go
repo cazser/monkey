@@ -192,3 +192,32 @@ func TestReturnStatements(t *testing.T){
 		testIntegertObject(t, evaluated, tt.expected);
 	}
 }
+
+
+func TestErrorHandling(t *testing.T){
+	tests:=[]struct{
+		input string 
+		expectedMessage string
+	}{
+		{
+			"5 + true",
+			"type mismacth: INTEGER + BOOLEAN",
+		},
+	}
+
+	for _, tt := range tests{
+		evaluated:= testEval(tt.input);
+
+		errObj, ok := evaluated.(*object.Error);
+		if !ok{
+			t.Errorf("no error object returned. got=%T(%+v)",
+		evaluated, evaluated);
+		continue;
+		}
+
+		if errObj.Message != tt.expectedMessage{
+			t.Errorf("wrong error message. expected=%q, got=%q",
+		tt.expectedMessage, errObj.Message);
+		}
+	}
+}
