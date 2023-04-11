@@ -7,6 +7,17 @@ import (
 	"testing"
 )
 
+func TestClosures(t *testing.T){
+	input:=`
+	let newAdder = fn(x){
+		fn(y) {x+y};
+	};
+	let addTwo = newAdder(2);
+	addTwo(2);`
+
+	testIntegerObject(t, testEval(input), 4);
+}
+
 func TestEvalIntegerExpression(t *testing.T) {
 	tests := []struct {
 		input    string
@@ -349,3 +360,4 @@ func testNullObject(t *testing.T, obj object.Object) bool {
 	}
 	return true
 }
+
