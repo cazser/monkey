@@ -21,5 +21,28 @@ var builtins = map[string]*object.Builtin{
 			}
 		},
 	},
+	"first": &object.Builtin{
+		Fn: func(args ...object.Object) object.Object{
+			if len(args)!=1{
+				return newError("wrong number of arguments. got=%d, want=1",
+			len(args));
+			}
+
+			if args[0].Type() != object.ARRAY_OBJ{
+				return newError("wrong number of arguments. got=%d, want=1",
+			len(args))
+			}
+
+			arr:= args[0].(*object.Array);
+			if len(arr.Elements)>0{
+				return arr.Elements[0];
+			}
+
+			return NULL;
+		},
+	},
+
+
+
 }
 
